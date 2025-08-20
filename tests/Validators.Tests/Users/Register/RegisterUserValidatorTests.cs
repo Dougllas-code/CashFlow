@@ -86,7 +86,5 @@ namespace Validators.Tests.Users.Register
             Assert.False(result.IsValid);
             Assert.Contains(result.Errors, e => e.PropertyName == nameof(request.Password) && e.ErrorMessage == ResourceErrorMessages.PASSWORD_INVALID);
         }
-
-
     }
 }
