@@ -2,6 +2,7 @@
 using CommonTestUtilities.InlineData;
 using CommonTestUtilities.Requests;
 using System.Globalization;
+using System.Net;
 using System.Text.Json;
 
 namespace WebApi.Tests.Expenses.Register
@@ -14,20 +15,20 @@ namespace WebApi.Tests.Expenses.Register
 
         public RegisterExpenseTest(CustomWebApplicationFactory webApplicationFactory): base(webApplicationFactory)
         {
-            _token = webApplicationFactory.GetToken();
+            _token = webApplicationFactory.User_Team_Member.GetToken();
         }
 
         [Fact]
         public async Task Success()
         {
             // Arrange
-            var request = RegisterExpenseRequestBuilder.Build();
+            var request = ExpenseRequestBuilder.Build();
 
             // Act
             var result = await DoPost(METHOD, request, _token);
 
             // Assert
-            Assert.Equal(System.Net.HttpStatusCode.Created, result.StatusCode);
+            Assert.Equal(HttpStatusCode.Created, result.StatusCode);
 
             var responseBody = await result.Content.ReadAsStreamAsync();
             var responseData = await JsonDocument.ParseAsync(responseBody);
@@ -45,14 +46,14 @@ namespace WebApi.Tests.Expenses.Register
         public async Task Bad_Request(string culture)
         {
             // Arrange
-            var request = RegisterExpenseRequestBuilder.Build();
+            var request = ExpenseRequestBuilder.Build();
             request.Title = string.Empty;
 
             // Act
             var result = await DoPost(METHOD, request, _token, culture);
 
             // Assert
-            Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
 
             var responseBody = await result.Content.ReadAsStreamAsync();
             var responseData = await JsonDocument.ParseAsync(responseBody);
